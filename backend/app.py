@@ -1,3 +1,9 @@
+"""
+This is the backend Flask runtime for the Fashion MNIST classification
+Has only a single endpoint /classify which takes a file as input,
+and responds back with top 3 (configurable) classifications, along with their probabilities
+"""
+
 import torch
 import torch.nn as nn
 import torchvision.transforms as transforms
@@ -27,7 +33,7 @@ class FashionMNISTModel(nn.Module):
         return x
 
 
-# Load model
+# loading model
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model = FashionMNISTModel().to(device)
 model.load_state_dict(torch.load("fashion_mnist_model.pth", map_location=device))
@@ -38,13 +44,11 @@ model.eval()
 app = Flask(__name__)
 CORS(app)
 
-# Fashion MNIST class labels
 class_labels = [
     "T-shirt/top", "Trouser", "Pullover", "Dress", "Coat",
     "Sandal", "Shirt", "Sneaker", "Bag", "Ankle boot"
 ]
 
-# Image transformation
 transform = transforms.Compose([
     transforms.Grayscale(num_output_channels=1),  # 1 channel
     transforms.Resize((28, 28)),
@@ -55,14 +59,14 @@ transform = transforms.Compose([
 
 
 def preprocess_img(file):
-    img = Image.open(io.BytesIO(file.read())).convert("L")  # Convert to grayscale
-    img = transform(img).unsqueeze(0).to(device)  # Add batch dimension
+    img = Image.open(io.BytesIO(file.read())).convert("L")  # converting to grayscale
+    img = transform(img).unsqueeze(0).to(device)  # adding batch dimension
     return img
 
 
 def get_probabilities(output, top=3):
     probs = torch.nn.functional.softmax(output, dim=1)  # Convert logits to probabilities
-    probs = probs.squeeze().cpu().numpy()  # Convert tensor to NumPy array
+    probs = probs.squeeze().cpu().numpy()
     sorted_indices = probs.argsort()[::-1]
     sorted_probs = probs[sorted_indices][:top]
     sorted_probs = [f"{100.0 * p:.2f}%" for p in sorted_probs]
@@ -95,5 +99,5 @@ def classify_image():
 
 
 if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 5000))  # Default to 5000 if PORT is not set
+    port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)

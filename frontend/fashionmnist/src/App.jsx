@@ -9,13 +9,11 @@ function App() {
   const [probabilities, setProbabilities] = useState([]);
   const [error, setError] = useState(null);
 
-  // Handle file input change
   const onFileChange = (e) => {
     const selectedFile = e.target.files[0];
     setFile(selectedFile);
   };
 
-  // Handle image upload and classification request
   const handleSubmit = async (e) => {
     e.preventDefault();
 

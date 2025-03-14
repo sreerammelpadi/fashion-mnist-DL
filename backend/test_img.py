@@ -1,3 +1,7 @@
+"""
+A dummy backend that can load a file and classify for Fashion MNIST
+"""
+
 import torch
 import torch.nn as nn
 import torchvision.transforms as transforms
@@ -6,7 +10,6 @@ import tkinter as tk
 from tkinter import filedialog
 
 
-# Define the same model architecture
 class FashionMNISTModel(nn.Module):
     def __init__(self):
         super(FashionMNISTModel, self).__init__()
@@ -26,13 +29,11 @@ class FashionMNISTModel(nn.Module):
         return x
 
 
-# Load the trained model
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model = FashionMNISTModel().to(device)
 model.load_state_dict(torch.load("fashion_mnist_model.pth", map_location=device))
 model.eval()
 
-# Define class names (same as FashionMNIST dataset)
 class_names = [
     "T-shirt/top", "Trouser", "Pullover", "Dress", "Coat",
     "Sandal", "Shirt", "Sneaker", "Bag", "Ankle boot"
@@ -40,14 +41,13 @@ class_names = [
 print(class_names)
 
 
-# Image preprocessing function
 def preprocess_image(image_path):
     transform = transforms.Compose([
-        transforms.Grayscale(num_output_channels=1),  # Ensure 1 channel
-        transforms.Resize((28, 28)),  # Resize to 28x28 (same as dataset)
+        transforms.Grayscale(num_output_channels=1),
+        transforms.Resize((28, 28)),
         transforms.ToTensor(),
-        transforms.Lambda(lambda x: 1 - x),  # Invert grayscale
-        transforms.Normalize((0.5,), (0.5,))  # Normalize like training data
+        transforms.Lambda(lambda x: 1 - x),
+        transforms.Normalize((0.5,), (0.5,))
     ])
     image = Image.open(image_path)
     image = transform(image).unsqueeze(0)  # Add batch dimension
@@ -55,7 +55,7 @@ def preprocess_image(image_path):
 
 
 def get_probabilities(output, top=3):
-    probs = torch.nn.functional.softmax(output, dim=1)  # Convert logits to probabilities
+    probs = torch.nn.functional.softmax(output, dim=1)
     probs = probs.squeeze().cpu().numpy()  # Convert tensor to NumPy array
     sorted_indices = probs.argsort()[::-1]
     sorted_probs = probs[sorted_indices][:top]
@@ -65,10 +65,9 @@ def get_probabilities(output, top=3):
     return sorted_labels, sorted_probs
 
 
-# Function to select an image and classify it
 def classify_image():
     root = tk.Tk()
-    root.withdraw()  # Hide the Tkinter window
+    root.withdraw()
     file_path = filedialog.askopenfilename(title="Select an Image",
                                            filetypes=[("Image Files", "*.png;*.jpg;*.jpeg")])
     if not file_path:
