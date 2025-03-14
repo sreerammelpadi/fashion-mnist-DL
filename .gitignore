@@ -1,2 +1,13 @@
 /.venv/
 /.idea/
+__pycache__/
+*.pyc
+*.pyo
+
+*.h5
+*.csv
+*.tar.gz
+*.zip
+*.tar
+
+*.log
