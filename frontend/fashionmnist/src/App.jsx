@@ -27,7 +27,7 @@ function App() {
     formData.append("file", file);
 
     try {
-      const response = await axios.post("https://fashion-mnist-backend-8ea22dbdea86.herokuapp.com/classify", formData, {
+      const response = await axios.post("https://appname.herokuapp.com/classify", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

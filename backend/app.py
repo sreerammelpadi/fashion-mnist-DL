@@ -13,7 +13,7 @@ import os
 import io
 from flask_cors import CORS
 
-
+# DL Model for Fashion MNIST
 class FashionMNISTModel(nn.Module):
     def __init__(self):
         super(FashionMNISTModel, self).__init__()
@@ -42,13 +42,14 @@ model.eval()
 
 # Flask app
 app = Flask(__name__)
-CORS(app)
+CORS(app)  # Need CORS in order to allow for Cross Origin Requests.
 
 class_labels = [
     "T-shirt/top", "Trouser", "Pullover", "Dress", "Coat",
     "Sandal", "Shirt", "Sneaker", "Bag", "Ankle boot"
 ]
 
+# The preprocessing steps that are performed on the images are below:
 transform = transforms.Compose([
     transforms.Grayscale(num_output_channels=1),  # 1 channel
     transforms.Resize((28, 28)),
@@ -63,7 +64,7 @@ def preprocess_img(file):
     img = transform(img).unsqueeze(0).to(device)  # adding batch dimension
     return img
 
-
+# Takes the model's output and returns the top 3 labels and their probabilities. Uses Softmax for that.
 def get_probabilities(output, top=3):
     probs = torch.nn.functional.softmax(output, dim=1)  # Convert logits to probabilities
     probs = probs.squeeze().cpu().numpy()
@@ -74,7 +75,7 @@ def get_probabilities(output, top=3):
 
     return sorted_labels, sorted_probs
 
-
+# The only endpoint
 @app.route('/classify', methods=['POST'])
 def classify_image():
     if 'file' not in request.files:
