@@ -1,5 +1,6 @@
 /.venv/
 /.idea/
+/.heroku/
 __pycache__/
 *.pyc
 *.pyo
