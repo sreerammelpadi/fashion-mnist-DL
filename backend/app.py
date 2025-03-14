@@ -1,7 +1,5 @@
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
-from collections import OrderedDict
 import torchvision.transforms as transforms
 from flask import Flask, request, jsonify
 from PIL import Image
@@ -38,7 +36,7 @@ model.eval()
 
 # Flask app
 app = Flask(__name__)
-CORS(app)
+# CORS(app)
 
 # Fashion MNIST class labels
 class_labels = [
