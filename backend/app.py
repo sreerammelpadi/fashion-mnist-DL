@@ -3,8 +3,8 @@ import torch.nn as nn
 import torchvision.transforms as transforms
 from flask import Flask, request, jsonify
 from PIL import Image
+import os
 import io
-
 from flask_cors import CORS
 
 
@@ -36,7 +36,7 @@ model.eval()
 
 # Flask app
 app = Flask(__name__)
-# CORS(app)
+CORS(app)
 
 # Fashion MNIST class labels
 class_labels = [
@@ -95,5 +95,5 @@ def classify_image():
 
 
 if __name__ == '__main__':
-    app.run(host='127.0.0.1', port=7676)
-    # CORS(app, resources={r"/api/*": {"origins": "http://localhost:5173"}})
+    port = int(os.environ.get("PORT", 5000))  # Default to 5000 if PORT is not set
+    app.run(host='0.0.0.0', port=port)
